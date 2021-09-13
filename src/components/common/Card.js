@@ -1,5 +1,5 @@
 import React from 'react';
-import {TouchableOpacity, View, StyleSheet} from 'react-native';
+import {TouchableOpacity, View, StyleSheet, Share} from 'react-native';
 
 import TitleText from './TitleText';
 
@@ -24,16 +24,36 @@ const Card = ({
   disabled,
 }) => {
   // console.log(nTime);
-  function misToTime(ms) {
-    let seconds = (ms / 1000).toFixed(0);
-    let minutes = (ms / (1000 * 60)).toFixed(0);
-    let hours = (ms / (1000 * 60 * 60)).toFixed(0);
-    let days = (ms / (1000 * 60 * 60 * 24)).toFixed(0);
-    if (seconds < 60) return seconds + ' Second';
-    else if (minutes < 60) return minutes + ' Minutes';
-    else if (hours < 24) return hours + ' Hours';
-    else return days + ' Days';
-  }
+  // function misToTime(ms) {
+  //   let seconds = (ms / 1000).toFixed(0);
+  //   let minutes = (ms / (1000 * 60)).toFixed(0);
+  //   let hours = (ms / (1000 * 60 * 60)).toFixed(0);
+  //   let days = (ms / (1000 * 60 * 60 * 24)).toFixed(0);
+  //   if (seconds < 60) return seconds + ' Second';
+  //   else if (minutes < 60) return minutes + ' Minutes';
+  //   else if (hours < 24) return hours + ' Hours';
+  //   else return days + ' Days';
+  // }
+
+  const onShare = async title => {
+    try {
+      const result = await Share.share({
+        message: title,
+      });
+      if (result.action === Share.sharedAction) {
+        if (result.activityType) {
+          // shared with activity type of result.activityType
+        } else {
+          // shared
+        }
+      } else if (result.action === Share.dismissedAction) {
+        // dismissed
+      }
+    } catch (error) {
+      alert(error.message);
+    }
+  };
+
   return (
     <TouchableOpacity
       style={[styles.container, style]}
@@ -50,7 +70,7 @@ const Card = ({
           {score} points by {by} {time} Milliseconds ago
         </AppText>
       </View>
-      <TouchableOpacity style={styles.share}>
+      <TouchableOpacity style={styles.share} onPress={() => onShare(title)}>
         <Icon name="share-social-sharp" size={20} />
       </TouchableOpacity>
     </TouchableOpacity>
